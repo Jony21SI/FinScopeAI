@@ -9,10 +9,7 @@ export default async function Home() {
     return (
       <main>
         <div className="container mx-auto flex flex-col items-center justify-center min-h-screen">
-          "
-          <h1 className="text-5xl font-bold underline">
-            Welcome to FinScopeAI!
-          </h1>
+          <h1 className="text-5xl ">Welcome to FinScopeAI!</h1>
           <p>Signup or Login</p>
           <p>
             FinScopeAI is your personal financial assistant, powered by AI.
@@ -21,12 +18,16 @@ export default async function Home() {
           <div className="flex flex-col gap-6">
             <div>
               <a href="/auth/login?screen_hint=signup">
-                <button>Sign up</button>
+                <button className="bg-feijoa-500 text-feijoa-700">
+                  Sign up
+                </button>
               </a>
             </div>
             <div>
               <a href="/auth/login">
-                <button>Log in</button>
+                <button className="bg-feijoa-700 text-feijoa-300">
+                  Log in
+                </button>
               </a>
             </div>
           </div>

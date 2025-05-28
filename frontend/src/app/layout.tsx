@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "FinScopeAI",
   description: "Your Financial Scope AI Assistant",
   icons: {
-    icon: "/FinScopeIcon.png",
+    icon: "/FinScopeAI-icon.png",
   },
 };
 

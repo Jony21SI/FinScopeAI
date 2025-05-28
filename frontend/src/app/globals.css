@@ -1,16 +1,28 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-feijoa-50: #f4f8ed;
+  --color-feijoa-100: #e6f0d7;
+  --color-feijoa-200: #cee2b4;
+  --color-feijoa-300: #b3d28e;
+  --color-feijoa-400: #90bb60;
+  --color-feijoa-500: #739f43;
+  --color-feijoa-600: #587e32;
+  --color-feijoa-700: #44612a;
+  --color-feijoa-800: #394e26;
+  --color-feijoa-900: #324423;
+  --color-feijoa-950: #18240f;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f8ed;
+  --foreground: #44612a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #f4f8ed;
+    --foreground: #44612a;
   }
 }
 
