@@ -1,4 +1,8 @@
 import { auth0 } from "@/lib/auth0";
+import Header from "./components/header/Header";
+import HeroBanner from "./components/herobanner/HeroBanner";
+import Features from "./components/features/Features";
+import AskOurAI from "./components/askOurAI/AskOurAI";
 
 export default async function Home() {
   // Fetch the user session
@@ -7,32 +11,13 @@ export default async function Home() {
   // If no session, show sign-up and login buttons
   if (!session) {
     return (
-      <main>
-        <div className="container mx-auto flex flex-col items-center justify-center min-h-screen">
-          <h1 className="text-5xl ">Welcome to FinScopeAI!</h1>
-          <p>Signup or Login</p>
-          <p>
-            FinScopeAI is your personal financial assistant, powered by AI.
-            Manage your finances effortlessly.
-          </p>
-          <div className="flex flex-col gap-6">
-            <div>
-              <a href="/auth/login?screen_hint=signup">
-                <button className="bg-feijoa-500 text-feijoa-700">
-                  Sign up
-                </button>
-              </a>
-            </div>
-            <div>
-              <a href="/auth/login">
-                <button className="bg-feijoa-700 text-feijoa-300">
-                  Log in
-                </button>
-              </a>
-            </div>
-          </div>
-        </div>
-      </main>
+      <>
+        <Header />
+        <hr className="border-0 h-[2px] bg-feijoa-800 opacity-50 w-full" />
+        <HeroBanner />
+        <Features />
+        <AskOurAI />
+      </>
     );
   }
 
