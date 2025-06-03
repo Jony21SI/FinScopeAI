@@ -4,12 +4,13 @@ import HeroBanner from "./components/herobanner/HeroBanner";
 import Features from "./components/features/Features";
 import AskOurAI from "./components/askOurAI/AskOurAI";
 import TestimonialsPricing from "./components/testimonials-pricing/TestimonialsPricing";
+import Dashboard from "./pages/dashboard/Dashboard";
 
 export default async function Home() {
   // Fetch the user session
   const session = await auth0.getSession();
+  console.log("Session:", session);
 
-  // If no session, show sign-up and login buttons
   if (!session) {
     return (
       <div className="h-screen overflow-y-scroll scrollbar-none">
@@ -23,15 +24,9 @@ export default async function Home() {
     );
   }
 
-  // If session exists, show a welcome message and logout button
   return (
     <main>
-      <h1 className="text-5xl">Welcome, {session.user.name}!</h1>
-      <p>
-        <a href="/auth/logout">
-          <button>Log out</button>
-        </a>
-      </p>
+      <Dashboard session={session} />
     </main>
   );
 }
