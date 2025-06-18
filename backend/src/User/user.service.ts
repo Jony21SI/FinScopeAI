@@ -28,13 +28,18 @@ export class UserService {
 
   async findOrCreate(
     auth0Id: string,
-    email: string,
-    name: string,
+    email?: string,
+    name?: string,
   ): Promise<User> {
     let user = await this.userRepository.findOne({ where: { auth0Id } });
 
     if (!user) {
-      user = this.userRepository.create({ auth0Id, email, name });
+      const userData: Partial<User> = {
+        auth0Id,
+        email: email || undefined,
+        name: name || undefined,
+      };
+      user = this.userRepository.create(userData);
       await this.userRepository.save(user);
     }
 

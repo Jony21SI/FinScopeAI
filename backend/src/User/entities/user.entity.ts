@@ -14,10 +14,10 @@ export class User {
   @Column({ unique: true })
   auth0Id: string;
 
-  @Column()
+  @Column({ nullable: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
   @CreateDateColumn()

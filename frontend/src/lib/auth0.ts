@@ -1,21 +1,20 @@
-// lib/auth0.js
+// lib/auth0.ts
 
 import { Auth0Client } from "@auth0/nextjs-auth0/server";
 
 // Initialize the Auth0 client
 export const auth0 = new Auth0Client({
-  // Options are loaded from environment variables by default
-  // Ensure necessary environment variables are properly set
-  // domain: process.env.AUTH0_DOMAIN,
-  // clientId: process.env.AUTH0_CLIENT_ID,
-  // clientSecret: process.env.AUTH0_CLIENT_SECRET,
-  // appBaseUrl: process.env.APP_BASE_URL,
-  // secret: process.env.AUTH0_SECRET,
+  // The following environment variables need to be set in your .env.local file:
+  // AUTH0_SECRET='use [openssl rand -hex 32] to generate a 32 bytes value'
+  // AUTH0_BASE_URL='http://localhost:3000'
+  // AUTH0_ISSUER_BASE_URL='https://your-domain.auth0.com'
+  // AUTH0_CLIENT_ID='your-client-id'
+  // AUTH0_CLIENT_SECRET='your-client-secret'
+  // AUTH0_AUDIENCE='your-api-identifier'
+  // AUTH0_SCOPE='openid profile email read:users'
 
   authorizationParameters: {
-    // In v4, the AUTH0_SCOPE and AUTH0_AUDIENCE environment variables for API authorized applications are no longer automatically picked up by the SDK.
-    // Instead, we need to provide the values explicitly.
-    scope: process.env.AUTH0_SCOPE,
+    scope: process.env.AUTH0_SCOPE || "openid profile email",
     audience: process.env.AUTH0_AUDIENCE,
   },
 });

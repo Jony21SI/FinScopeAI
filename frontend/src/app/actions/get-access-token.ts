@@ -1,8 +1,14 @@
-import { Auth0Client } from "@auth0/nextjs-auth0/server";
+"use server";
 
-export const auth0 = new Auth0Client();
+import { auth0 } from "../../lib/auth0";
 
 export async function getAccessTokenFromAuth0() {
-  const session = await auth0.getSession();
-  return session?.accessToken;
+  try {
+    const session = await auth0.getSession();
+    // The access token is nested inside tokenSet
+    return session?.tokenSet?.accessToken || session?.accessToken;
+  } catch (error) {
+    console.error("Error getting access token:", error);
+    return null;
+  }
 }
