@@ -12,6 +12,9 @@
   --color-feijoa-800: #394e26;
   --color-feijoa-900: #324423;
   --color-feijoa-950: #18240f;
+
+  --font-sans: var(--font-sans), "Inter", "system-ui", "sans-serif";
+  --font-alt: var(--font-alt), "Manrope", "system-ui", "sans-serif";
 }
 
 :root {
@@ -31,31 +34,31 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
   h1 {
-    @apply text-4xl font-bold;
+    @apply text-4xl font-bold font-sans;
   }
 
   h2 {
-    @apply text-4xl font-semibold;
+    @apply text-4xl font-semibold font-sans;
   }
 
   h3 {
-    @apply text-3xl font-medium;
+    @apply text-3xl font-medium font-sans;
   }
 
   h4 {
-    @apply text-2xl;
+    @apply text-2xl font-alt;
   }
 
   h5 {
-    @apply text-xl;
+    @apply text-xl font-alt;
   }
 
   h6 {
-    @apply text-lg;
+    @apply text-lg font-alt;
   }
 
   p {
-    @apply text-base leading-relaxed;
+    @apply text-base leading-relaxed font-alt;
   }
 }
 
