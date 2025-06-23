@@ -21,7 +21,7 @@ const Header = () => {
         </div>
         <div className="">
           <a
-            href="/auth/login"
+            href="/api/auth/login"
             className=" cursor-pointer bg-feijoa-700 px-10 py-2 rounded-lg hover:bg-feijoa-800  duration-300"
           >
             Login

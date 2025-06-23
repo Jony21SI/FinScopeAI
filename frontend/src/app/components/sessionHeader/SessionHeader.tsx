@@ -1,6 +1,9 @@
 import { SessionProps } from "./../../types/sessionTypes";
 
 const SessionHeader = ({ session }: SessionProps) => {
+  const userName = session.user.name || session.user.email || 'User';
+  const userPicture = session.user.picture || './FinScopeAI-Icon.png';
+
   return (
     <div className="flex p-2 items-center justify-between">
       <div className="flex">
@@ -19,13 +22,13 @@ const SessionHeader = ({ session }: SessionProps) => {
       </div>
       <div className="flex items-center">
         <img
-          src={session.user.picture}
+          src={userPicture}
           alt="User Profile"
           className="w-10 h-10 rounded-full shadow-lg"
         />
-        <h1 className="text-5xl px-4">Welcome, {session.user.given_name}!</h1>
+        <h1 className="text-5xl px-4">Welcome, {userName}!</h1>
         <p className="text-lg pr-4 ">
-          <a href="/auth/logout">
+          <a href="/api/auth/logout">
             <button className="cursor-pointer">Log out</button>
           </a>
         </p>

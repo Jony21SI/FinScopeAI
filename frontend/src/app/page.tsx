@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { auth0 } from "@/lib/auth0";
 import Header from "./components/header/Header";
 import HeroBanner from "./components/herobanner/HeroBanner";
 import Features from "./components/features/Features";
@@ -7,16 +6,8 @@ import AskOurAI from "./components/askOurAI/AskOurAI";
 import TestimonialsPricing from "./components/testimonials-pricing/TestimonialsPricing";
 
 export default async function Home() {
-
-  const session = await auth0.getSession();
-  console.log("Session:", session);
-
-
-  if (session) {
-    redirect("/dashboard");
-  }
-
-
+  // For now, just render the page without session checks
+  // We'll implement proper session management later
   return (
     <div className="h-screen overflow-y-scroll scrollbar-none">
       <Header />

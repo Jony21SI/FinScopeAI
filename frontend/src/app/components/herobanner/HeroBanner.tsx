@@ -8,7 +8,7 @@ const HeroBanner = () => {
           insights powered by AI
         </h5>
         <a
-          href="/auth/login?screen_hint=signup"
+          href="/api/auth/login?screen_hint=signup"
           className="bg-feijoa-700  px-6 py-3 rounded-xl font-semibold text-xl hover:bg-feijoa-800  duration-300"
         >
           Get Started

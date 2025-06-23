@@ -1,8 +1,5 @@
+import { Session } from "@/lib/auth";
+
 export type SessionProps = {
-  session: {
-    user: {
-      given_name?: string;
-      picture?: string;
-    };
-  };
+  session: Session;
 };
