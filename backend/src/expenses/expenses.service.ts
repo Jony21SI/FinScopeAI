@@ -8,6 +8,9 @@ import OpenAI from 'openai';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+// In-memory cache for expense categorization
+const expenseCategoryCache: Record<string, string> = {};
+
 @Injectable()
 export class ExpensesService {
   constructor(
@@ -18,9 +21,20 @@ export class ExpensesService {
   async create(dto: CreateExpenseDto) {
     const user = await this.usersService.findByAuth0Id(dto.userId);
     let category = dto.category;
+
+    // Use a normalized key for caching
+    const descKey = dto.description.trim().toLowerCase();
+
     if (!category || category.trim() === '') {
-      category = await this.categorizeExpense(dto.description);
+      if (expenseCategoryCache[descKey]) {
+        category = expenseCategoryCache[descKey];
+      } else {
+        category = await this.categorizeExpense(dto.description);
+        expenseCategoryCache[descKey] = category;
+      }
     }
+    category = category.trim();
+
     const expenseData = {
       amount: dto.amount,
       description: dto.description,
