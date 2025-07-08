@@ -4,6 +4,9 @@ import { UpdateExpenseDto } from './dto/update-expenses.dto';
 import { ExpensesRepository } from './expenses.repository';
 import { UserService } from '../User/user.service';
 import { Expense } from './entities/expenses.entity';
+import OpenAI from 'openai';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class ExpensesService {
@@ -14,10 +17,14 @@ export class ExpensesService {
 
   async create(dto: CreateExpenseDto) {
     const user = await this.usersService.findByAuth0Id(dto.userId);
+    let category = dto.category;
+    if (!category || category.trim() === '') {
+      category = await this.categorizeExpense(dto.description);
+    }
     const expenseData = {
       amount: dto.amount,
       description: dto.description,
-      category: dto.category,
+      category,
       date: new Date(dto.date),
       payment_method: dto.payment_method,
       credit_card_name: dto.credit_card_name,
@@ -25,6 +32,27 @@ export class ExpensesService {
     };
     const expense = this.repo.create(expenseData);
     return this.repo.save(expense);
+  }
+
+  private async categorizeExpense(description: string): Promise<string> {
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an AI assistant that categorizes expenses.',
+        },
+        {
+          role: 'user',
+          content: `Categorize the following expense description into one of these categories: Food, Transport, Utilities, Entertainment, Health, Shopping, Other.\n\nDescription: "${description}"\nCategory:`,
+        },
+      ],
+      max_completion_tokens: 10,
+      temperature: 0,
+    });
+    const category = response.choices[0]?.message?.content?.trim() || 'Other';
+    return category;
   }
 
   findAll(userId: string) {
