@@ -15,7 +15,7 @@ export class ProtectedController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('testing')
   getProtected(@Request() req) {
     console.log('Protected endpoint called');
     console.log('User from request:', req.user);

@@ -19,12 +19,13 @@ export default async function handler(
     const screenHint = req.query.screen_hint;
 
     let authUrl =
-      `${auth0Domain}/authorize?` +
-      `client_id=${clientId}&` +
-      `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-      `scope=${encodeURIComponent(scope)}&` +
-      `response_type=code&` +
-      `state=${Math.random().toString(36).substring(7)}`;
+    `${auth0Domain}/authorize?` +
+    `client_id=${clientId}&` +
+    `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+    `scope=${encodeURIComponent(scope)}&` +
+    `response_type=code&` +
+    `state=${Math.random().toString(36).substring(7)}` +
+    `&audience=${encodeURIComponent("https://api.finescopeai.com")}`;
 
     // Add screen_hint if provided
     if (screenHint) {
