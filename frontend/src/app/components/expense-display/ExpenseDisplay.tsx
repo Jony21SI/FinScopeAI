@@ -12,11 +12,18 @@ const ExpenseDisplay = ({ session }: SessionProps) => {
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
-        const response = await fetch('http://localhost:3001/expenses/a21538ba-add0-4b24-b597-683fc15e1e57', {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
+        // Get user id from session
+        const USER_ID = session?.user?.auth0Id;
+        if (!USER_ID) {
+          setError('No user ID found in session');
+          setLoading(false);
+          return;
+        }
+        const response = await fetch(`http://localhost:3001/expenses/user/${USER_ID}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         if (!response.ok) {
           throw new Error('Failed to fetch expenses');
         }
@@ -47,18 +54,18 @@ const ExpenseDisplay = ({ session }: SessionProps) => {
             Here are your expenses for the month of July
           </p>
           <div className="flex flex-col items-center justify-center">
-            {expenses.map((expense) => (
-              <div key={expense.id} className="border p-4 mb-4 rounded w-full max-w-md">
-                <h3 className="text-xl font-bold">{expense.description}</h3>
-                <p className="text-lg">Amount: ${expense.amount}</p>
-                <p className="text-lg">Category: {expense.category}</p>
-                <p className="text-lg">Date: {new Date(expense.date).toLocaleDateString()}</p>
-                <p className="text-lg">Payment Method: {expense.payment_method}</p>
-                {expense.credit_card_name && (
-                  <p className="text-lg">Credit Card: {expense.credit_card_name}</p>
+            {expenses.map(({ id, description, amount, category, date, payment_method, credit_card_name, created_at }) => (
+              <div key={id} className="border p-4 mb-4 rounded w-full max-w-md">
+                <h3 className="text-xl font-bold">{description}</h3>
+                <p className="text-lg">Amount: ${amount}</p>
+                <p className="text-lg">Category: {category}</p>
+                <p className="text-lg">Date: {new Date(date).toLocaleDateString()}</p>
+                <p className="text-lg">Payment Method: {payment_method}</p>
+                {credit_card_name && (
+                  <p className="text-lg">Credit Card: {credit_card_name}</p>
                 )}
                 <p className="text-sm text-gray-500">
-                  Created: {new Date(expense.created_at).toLocaleString()}
+                  Created: {new Date(created_at).toLocaleString()}
                 </p>
               </div>
             ))}
