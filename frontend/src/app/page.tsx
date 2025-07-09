@@ -6,8 +6,8 @@ import AskOurAI from "./components/askOurAI/AskOurAI";
 import TestimonialsPricing from "./components/testimonials-pricing/TestimonialsPricing";
 
 export default async function Home() {
-  // For now, just render the page without session checks
-  // We'll implement proper session management later
+  // Render the page without session checks
+  // Implement session management later
   return (
     <div className="h-screen overflow-y-scroll scrollbar-none">
       <Header />
