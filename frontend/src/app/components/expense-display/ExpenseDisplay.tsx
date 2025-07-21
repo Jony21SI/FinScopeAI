@@ -6,6 +6,10 @@ import ExpenseTable from "./ExpenseTable";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddExpenseModal from "./AddExpenseModal";
+
+const paymentMethods = ["cash", "debit", "credit_card", "transfer"];
+const creditCardOptions = ["Banamex", "Bbva", "Santander", "HSBC", "Other"];
 
 const ExpenseDisplay = ({ session }: SessionProps) => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -13,6 +17,14 @@ const ExpenseDisplay = ({ session }: SessionProps) => {
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState<number | null>(null);
   const accessToken = session?.accessToken;
+  const [modalOpen, setModalOpen] = useState(false);
+  const [form, setForm] = useState({
+    amount: "",
+    description: "",
+    payment_method: paymentMethods[0],
+    credit_card_name: creditCardOptions[0],
+  });
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchExpenses = async () => {
@@ -61,12 +73,82 @@ const ExpenseDisplay = ({ session }: SessionProps) => {
     fetchTotal();
   }, []);
 
+  useEffect(() => {
+    if (modalOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [modalOpen]);
+
   if (loading) return <p>Loading expenses...</p>;
   if (error) return <p>Error: {error}</p>;
   if (expenses.length === 0) return <p>No expenses found</p>;
 
+  const handleOpenModal = () => setModalOpen(true);
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setForm({
+      amount: "",
+      description: "",
+      payment_method: paymentMethods[0],
+      credit_card_name: creditCardOptions[0],
+    });
+  };
+
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const body = {
+        amount: Number(form.amount),
+        description: form.description,
+        date: new Date().toISOString(),
+        payment_method: form.payment_method,
+        credit_card_name: form.credit_card_name,
+        userId: session.user.auth0Id,
+      };
+      const response = await fetch("http://localhost:3001/expenses", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) throw new Error("Failed to add expense");
+      handleCloseModal();
+      // Optionally refresh expenses
+      window.location.reload();
+    } catch (err) {
+      // Optionally show error
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center h-screen pt-10">
+      <AddExpenseModal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmit}
+        form={form}
+        onFormChange={handleFormChange}
+        submitting={submitting}
+        paymentMethods={paymentMethods}
+        creditCardOptions={creditCardOptions}
+      />
+      {/* End Modal */}
       <h1 className="text-4xl font-bold">Dashboard</h1>
       <p className="text-lg">Welcome to your dashboard</p>
       {total !== null && (
@@ -81,7 +163,10 @@ const ExpenseDisplay = ({ session }: SessionProps) => {
             Here are your expenses for the month of July
           </p>
           <div className="flex flex-row gap-10 my-4">
-            <button className="relative text-base uppercase no-underline py-3 px-8 cursor-pointer rounded-full transition-all border-none font-medium text-feijoa-50 bg-feijoa-800 shadow hover:-translate-y-1 hover:shadow-lg active:-translate-y-0.5 active:shadow-md focus:outline-none focus:ring-2 focus:ring-feijoa-700 after:content-[''] after:inline-block after:h-full after:w-full after:rounded-full after:absolute after:top-0 after:left-0 after:-z-10 after:bg-feijoa-800 after:transition-all after:duration-400 hover:after:scale-x-115 hover:after:scale-y-115 hover:after:opacity-0 flex items-center gap-3">
+            <button
+              className="relative text-base uppercase no-underline py-3 px-8 cursor-pointer rounded-full transition-all border-none font-medium text-feijoa-50 bg-feijoa-800 shadow hover:-translate-y-1 hover:shadow-lg active:-translate-y-0.5 active:shadow-md focus:outline-none focus:ring-2 focus:ring-feijoa-700 after:content-[''] after:inline-block after:h-full after:w-full after:rounded-full after:absolute after:top-0 after:left-0 after:-z-10 after:bg-feijoa-800 after:transition-all after:duration-400 hover:after:scale-x-115 hover:after:scale-y-115 hover:after:opacity-0 flex items-center gap-3"
+              onClick={handleOpenModal}
+            >
               <AddCircleIcon className="text-feijoa-50" />
               Add Expense
             </button>
