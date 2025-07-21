@@ -1,4 +1,11 @@
 import React from "react";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface AddExpenseModalProps {
   open: boolean;
@@ -28,25 +35,20 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({
   paymentMethods,
   creditCardOptions,
 }) => {
-  if (!open) return null;
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative animate-fade-in"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          className="absolute top-2 right-4 text-2xl text-feijoa-800 hover:text-feijoa-700 font-bold hover:cursor-pointer"
-          onClick={onClose}
-          aria-label="Close"
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle className="flex items-center justify-between text-feijoa-800 font-bold text-2xl">
+        Add Expense
+        <IconButton onClick={onClose} aria-label="close" size="large">
+          <CloseIcon className="text-feijoa-800" />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent>
+        <form
+          id="add-expense-form"
+          onSubmit={onSubmit}
+          className="flex flex-col gap-4 mt-2"
         >
-          &times;
-        </button>
-        <h2 className="text-2xl font-bold mb-4 text-feijoa-800">Add Expense</h2>
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">Amount</label>
             <input
@@ -108,24 +110,37 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({
                 </option>
               ))}
             </select>
-            <button
+            <Button
               type="button"
-              className="mt-2 bg-feijoa-100 text-feijoa-800 py-1 px-4 rounded-full font-semibold shadow hover:bg-feijoa-200 transition-all border border-feijoa-800 hover:cursor-pointer"
+              variant="outlined"
+              color="success"
+              className="mt-2 !border-feijoa-800 !text-feijoa-800 !bg-feijoa-100 !rounded-full !font-semibold !shadow hover:!bg-feijoa-200"
+              style={{ marginTop: 8 }}
               // No functionality yet
             >
               + Add Credit Card
-            </button>
+            </Button>
           </div>
-          <button
-            type="submit"
-            className="mt-2 bg-feijoa-800 text-feijoa-50 py-2 px-6 rounded-full font-semibold shadow hover:bg-feijoa-700 transition-all disabled:opacity-60 hover:cursor-pointer"
-            disabled={submitting}
-          >
-            {submitting ? "Adding..." : "Add Expense"}
-          </button>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          type="submit"
+          form="add-expense-form"
+          variant="contained"
+          style={{
+            backgroundColor: "#4CAF50",
+            color: "#fff",
+            borderRadius: 9999,
+            fontWeight: 600,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          }}
+          disabled={submitting}
+        >
+          {submitting ? "Adding..." : "Add Expense"}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
