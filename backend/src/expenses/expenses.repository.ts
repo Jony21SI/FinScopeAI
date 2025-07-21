@@ -39,4 +39,12 @@ export class ExpensesRepository {
   remove(id: string) {
     return this.repo.delete(id);
   }
+
+  async getTotalExpenses(): Promise<number> {
+    const result = await this.repo
+      .createQueryBuilder('expense')
+      .select('SUM(expense.amount)', 'total')
+      .getRawOne();
+    return Number(result.total) || 0;
+  }
 }

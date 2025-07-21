@@ -117,4 +117,8 @@ export class ExpensesService {
   remove(id: string) {
     return this.repo.remove(id);
   }
+
+  getTotalExpenses() {
+    return this.repo.getTotalExpenses();
+  }
 }

@@ -25,6 +25,11 @@ export class ExpensesController {
     return this.service.findAll(userId);
   }
 
+  @Get('total')
+  getTotalExpenses() {
+    return this.service.getTotalExpenses();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
