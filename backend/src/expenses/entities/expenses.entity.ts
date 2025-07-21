@@ -22,6 +22,12 @@ export class Expense {
   description: string;
 
   @Column()
+  main_category: string;
+
+  @Column()
+  subcategory: string;
+
+  @Column({ nullable: true })
   category: string;
 
   @Column()

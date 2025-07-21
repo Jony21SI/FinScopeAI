@@ -9,7 +9,10 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 // In-memory cache for expense categorization
-const expenseCategoryCache: Record<string, string> = {};
+const expenseCategoryCache: Record<
+  string,
+  { main_category: string; subcategory: string }
+> = {};
 
 @Injectable()
 export class ExpensesService {
@@ -20,53 +23,74 @@ export class ExpensesService {
 
   async create(dto: CreateExpenseDto) {
     const user = await this.usersService.findByAuth0Id(dto.userId);
-    let category = dto.category;
-
+    let main_category = dto.main_category;
+    let subcategory = dto.subcategory;
     // Use a normalized key for caching
     const descKey = dto.description.trim().toLowerCase();
 
-    if (!category || category.trim() === '') {
+    if (
+      !main_category ||
+      !subcategory ||
+      main_category.trim() === '' ||
+      subcategory.trim() === ''
+    ) {
       if (expenseCategoryCache[descKey]) {
-        category = expenseCategoryCache[descKey];
+        ({ main_category, subcategory } = expenseCategoryCache[descKey]);
       } else {
-        category = await this.categorizeExpense(dto.description);
-        expenseCategoryCache[descKey] = category;
+        ({ main_category, subcategory } = await this.categorizeExpense(
+          dto.description,
+        ));
+        expenseCategoryCache[descKey] = { main_category, subcategory };
       }
     }
-    category = category.trim();
+    main_category = main_category?.trim();
+    subcategory = subcategory?.trim();
 
     const expenseData = {
       amount: dto.amount,
       description: dto.description,
-      category,
+      main_category,
+      subcategory,
       date: new Date(dto.date),
       payment_method: dto.payment_method,
       credit_card_name: dto.credit_card_name,
       user,
     };
+    console.log('Expense to save:', expenseData); // Debug log
     const expense = this.repo.create(expenseData);
     return this.repo.save(expense);
   }
 
-  private async categorizeExpense(description: string): Promise<string> {
+  private async categorizeExpense(
+    description: string,
+  ): Promise<{ main_category: string; subcategory: string }> {
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
-          content: 'You are an AI assistant that categorizes expenses.',
+          content: `You are an AI assistant that categorizes expenses for personal finance. Given an expense description, return both a main_category and a subcategory from the following options.\n\nMain categories: Food, Transport, Utilities, Entertainment, Health, Shopping, Financial, Education, Travel, Other\nSubcategories for Food: Groceries, Restaurants, Coffee Shops, Fast Food, Bars, Other\nSubcategories for Transport: Public Transport, Taxi/Rideshare, Fuel, Parking, Other\nSubcategories for Utilities: Electricity, Water, Gas, Internet, Phone, Other\nSubcategories for Entertainment: Movies, Concerts, Streaming, Events, Other\nSubcategories for Health: Pharmacy, Doctor, Dentist, Insurance, Other\nSubcategories for Shopping: Clothing, Electronics, Home, Gifts, Other\nSubcategories for Financial: Bank Fees, Investments, Insurance, Other\nSubcategories for Education: Tuition, Books, Courses, Other\nSubcategories for Travel: Flights, Hotels, Car Rental, Other\nSubcategories for Other: Other\n\nReturn your answer in this JSON format: {"main_category": "...", "subcategory": "..."}`,
         },
         {
           role: 'user',
-          content: `Categorize the following expense description into one of these categories: Food, Transport, Utilities, Entertainment, Health, Shopping, Other.\n\nDescription: "${description}"\nCategory:`,
+          content: `Description: "${description}"`,
         },
       ],
-      max_completion_tokens: 10,
+      max_completion_tokens: 50,
       temperature: 0,
     });
-    const category = response.choices[0]?.message?.content?.trim() || 'Other';
-    return category;
+    const json = response.choices[0]?.message?.content?.trim();
+    console.log('OpenAI raw response:', json); // Debug log
+    try {
+      const parsed = JSON.parse(
+        json ?? '{"main_category": "Other", "subcategory": "Other"}',
+      );
+      console.log('Parsed OpenAI response:', parsed); // Debug log
+      return parsed;
+    } catch (e) {
+      return { main_category: 'Other', subcategory: 'Other' };
+    }
   }
 
   findAll(userId: string) {

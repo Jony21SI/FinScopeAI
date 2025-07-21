@@ -13,9 +13,11 @@ export interface Expense {
   id: string;
   amount: number;
   description: string;
-  category: string;
+  main_category: string;
+  subcategory: string;
+  category?: string;
   date: string;
-  payment_method: 'cash' | 'debit' | 'credit_card' | 'transfer';
+  payment_method: "cash" | "debit" | "credit_card" | "transfer";
   credit_card_name?: string;
   created_at: string;
   user: User;
@@ -74,7 +76,7 @@ export interface CreateExpenseForm {
   description: string;
   category?: string;
   date: string;
-  payment_method: 'cash' | 'debit' | 'credit_card' | 'transfer';
+  payment_method: "cash" | "debit" | "credit_card" | "transfer";
   credit_card_name?: string;
 }
 
@@ -83,7 +85,7 @@ export interface UpdateExpenseForm {
   description?: string;
   category?: string;
   date?: string;
-  payment_method?: 'cash' | 'debit' | 'credit_card' | 'transfer';
+  payment_method?: "cash" | "debit" | "credit_card" | "transfer";
   credit_card_name?: string;
 }
 
@@ -104,4 +106,4 @@ export interface MonthlyExpense {
   month: string;
   total: number;
   expenses: Expense[];
-} 
+}

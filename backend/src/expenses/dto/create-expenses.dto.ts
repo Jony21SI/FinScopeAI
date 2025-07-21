@@ -16,7 +16,15 @@ export class CreateExpenseDto {
 
   @IsString()
   @IsNotEmpty()
-  category: string;
+  main_category: string;
+
+  @IsString()
+  @IsNotEmpty()
+  subcategory: string;
+
+  @IsOptional()
+  @IsString()
+  category?: string;
 
   @IsDateString()
   date: string;
